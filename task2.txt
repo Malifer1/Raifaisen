@@ -1,0 +1,29 @@
+create table orders (
+ card varchar(255) not null,
+ created_at date not null
+);
+
+insert into orders 
+ (card, created_at)
+values 
+  ('card2', '2016-11-11'),
+  ('card2', '2016-11-11'),
+  ('card1', '2016-11-11'),
+  ('card1', '2016-11-11'),
+  ('card3', '2016-11-11'),
+  ('card1', '2017-12-08'),  
+  ('card2', '2017-12-08'),
+  ('card2', '2017-12-08'),
+  ('card2', '2017-12-08'),
+  ('card3', '2017-12-08');
+  
+with a as (select card, created_at, count(*) as c from orders
+group by created_at, card
+order by created_at),
+m as (select a.created_at,  max(a.c) as m1
+from a
+group by a.created_at)
+select a.card, a.created_at
+from a
+join m on m.created_at = a.created_at
+where c = m.m1;
