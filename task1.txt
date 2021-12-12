@@ -1,0 +1,41 @@
+create table client_base(
+customer_id int,
+FIO varchar,
+primary key(customer_id)
+);
+create table cookie_base(
+client_id int,
+http_cookie varchar,
+primary key(http_cookie),
+FOREIGN KEY (client_id) REFERENCES client_base (customer_id)
+);
+create table log_base(
+link_cookie varchar,
+URL varchar,
+time_data date,
+FOREIGN KEY (link_cookie) REFERENCES cookie_base (http_cookie)
+);
+
+insert into client_base
+(customer_id, FIO)
+values
+(1, 'FIA'),
+(2, 'CAA'),
+(3, 'FDV');
+insert into cookie_base
+values
+(1, 'aaaa'),
+(2, 'bbbb'),
+(3, 'cccc');
+insert into log_base
+values
+('aaaa', 'AAAA','01.01.2018' ),
+('bbbb', 'BBBB','01.01.2021' ),
+('cccc', 'CCCC','10.12.2021' );
+select FIO
+from client_base a
+where a.customer_id =
+(select client_id
+from cookie_base b
+join log_base c on c.link_cookie = b.http_cookie
+where datediff(day, c.time_data, getdata()) > 30);
